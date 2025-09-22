@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Grabzy</title>
+  <style>
+    body { margin:0; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f9f9f9; color:#333;}
+    header {background:#2c3e50; color:white; padding:15px 20px; font-size:28px; font-weight:bold; display:flex; align-items:center; justify-content:space-between; position:relative;}
+    header .menu {font-size:26px; cursor:pointer; user-select:none;}
+    header .cart {font-size:24px; cursor:pointer; position:relative;}
+    header .cart span {position:absolute; top:-8px; right:-12px; background:#e74c3c; color:white; border-radius:50%; padding:2px 6px; font-size:14px; font-weight:bold;}
+    #add-product-form {display:none; max-width:600px; margin:20px auto; padding:15px; background:#fff; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1); text-align:left;}
+    #add-product-form input {width:100%; padding:10px; margin:5px 0; border-radius:5px; border:1px solid #ccc;}
+    #add-product-form button {background:#3498db; border:none; color:white; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:bold; margin-top:10px; transition:0.3s;}
+    #add-product-form button:hover{background:#2980b9;}
+    .products {display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; max-width:1000px; margin:30px auto; padding:0 20px;}
+    .card {background:#fff; border-radius:15px; padding:15px; box-shadow:0 4px 10px rgba(0,0,0,0.1); text-align:center; transition:0.3s;}
+    .card:hover{transform:translateY(-5px); box-shadow:0 8px 15px rgba(0,0,0,0.15);}
+    .card img{width:100%; border-radius:10px; margin-bottom:10px;}
+    .card button{background:#3498db; border:none; color:white; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:bold; margin-top:10px; transition:0.3s;}
+    .card button:hover{background:#2980b9;}
+    footer {background:#2c3e50; color:white; padding:20px; text-align:center; font-size:14px; margin-top:50px;}
+    footer .links {margin-bottom:10px;}
+    footer a {color:#ecf0f1; margin:0 10px; text-decoration:none;}
+    footer a:hover{text-decoration:underline;}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="menu" onclick="toggleForm()">☰</div>
+  <div>Grabzy 🛒</div>
+  <div class="cart">🛍️ <span id="cart-count">0</span></div>
+</header>
+
+<div id="add-product-form">
+  <h3>Add a New Product</h3>
+  <input type="text" id="productName" placeholder="Product Name">
+  <input type="number" id="productPrice" placeholder="Price (Rs)">
+  <input type="text" id="productImage" placeholder="Image URL">
+  <button onclick="addProduct()">Add Product</button>
+</div>
+
+<div class="products" id="product-grid">
+  <div class="card">
+    <img src="https://i.postimg.cc/WzH7p7YK/pizza.jpg" alt="Pizza">
+    <p>Pizza - Rs 500</p>
+    <button onclick="buy('Pizza', 500)">Buy</button>
+  </div>
+  <div class="card">
+    <img src="https://i.postimg.cc/Prd6D6nf/noodles.jpg" alt="Noodles">
+    <p>Noodles - Rs 200</p>
+    <button onclick="buy('Noodles', 200)">Buy</button>
+  </div>
+  <div class="card">
+    <img src="https://i.postimg.cc/PxRxFZMN/tshirt.jpg" alt="T-Shirt">
+    <p>T-Shirt - Rs 800</p>
+    <button onclick="buy('T-Shirt', 800)">Buy</button>
+  </div>
+</div>
+
+<div id="cart-section">
+  <p id="commission">Owner Earnings (5%): Rs 0</p>
+</div>
+
+<footer>
+  <div class="links">
+    <a href="#">About Us</a> | 
+    <a href="#">Contact</a> | 
+    <a href="#">Privacy Policy</a> | 
+    <a href="#">Terms of Service</a>
+  </div>
+  <p>&copy; 2025 Grabzy. All Rights Reserved.</p>
+</footer>
+
+<script>
+  let items = 0;
+  let total = 0;
+
+  function buy(product, price){
+    items++;
+    total += price;
+    document.getElementById("cart-count").innerText = items;
+    let commission = total * 0.05;
+    document.getElementById("commission").innerText = "Owner Earnings (5%): Rs " + commission;
+  }
+
+  function addProduct(){
+    let name = document.getElementById('productName').value;
+    let price = document.getElementById('productPrice').value;
+    let image = document.getElementById('productImage').value;
+    if(name && price && image){
+      let grid = document.getElementById('product-grid');
+      let card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `<img src="${image}" alt="${name}"><p>${name} - Rs ${price}</p><button onclick="buy('${name}', ${price})">Buy</button>`;
+      grid.appendChild(card);
+      document.getElementById('productName').value = '';
+      document.getElementById('productPrice').value = '';
+      document.getElementById('productImage').value = '';
+      document.getElementById('add-product-form').style.display="none";
+    } else { alert('Please fill in all fields.'); }
+  }
+
+  function toggleForm(){
+    let form = document.getElementById('add-product-form');
+    form.style.display = (form.style.display === "none" || form.style.display === "") ? "block" : "none";
+  }
+</script>
+
+</body>
+</html>
