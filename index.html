@@ -1,32 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Grabzy</title>
+  <link rel="icon" href="https://i.postimg.cc/3JkTt7nR/grabzy-icon.png" type="image/png">
   <style>
-    body { margin:0; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f9f9f9; color:#333;}
-    header {background:#2c3e50; color:white; padding:15px 20px; font-size:28px; font-weight:bold; display:flex; align-items:center; justify-content:space-between; position:relative;}
-    header .menu {font-size:26px; cursor:pointer; user-select:none;}
-    header .cart {font-size:24px; cursor:pointer; position:relative;}
-    header .cart span {position:absolute; top:-8px; right:-12px; background:#e74c3c; color:white; border-radius:50%; padding:2px 6px; font-size:14px; font-weight:bold;}
+    body {margin:0; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background:#f5f5f5; color:#333;}
+    header {background:#2c3e50; color:white; padding:15px 20px; display:flex; justify-content:space-between; align-items:center; position:sticky; top:0; z-index:10;}
+    header h1{font-size:28px;}
+    header .menu, header .cart{cursor:pointer; user-select:none; font-size:22px;}
+    header .cart span{background:#e74c3c; border-radius:50%; padding:2px 6px; font-size:14px; position:absolute; top:-8px; right:-10px;}
     
-    #add-product-form {display:none; max-width:600px; margin:20px auto; padding:15px; background:#fff; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1); text-align:left;}
-    #add-product-form input {width:100%; padding:10px; margin:5px 0; border-radius:5px; border:1px solid #ccc;}
-    #add-product-form button {background:#3498db; border:none; color:white; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:bold; margin-top:10px; transition:0.3s;}
-    #add-product-form button:hover{background:#2980b9;}
-    
+    #sell-product-form {display:none; max-width:600px; margin:20px auto; padding:15px; background:#fff; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1);}
+    #sell-product-form input {width:100%; padding:10px; margin:5px 0; border-radius:5px; border:1px solid #ccc;}
+    #sell-product-form button {background:#3498db; border:none; color:white; padding:10px 20px; border-radius:8px; cursor:pointer; margin-top:10px; transition:0.3s;}
+    #sell-product-form button:hover{background:#2980b9;}
+
+    #search-bar {max-width:800px; margin:20px auto; display:flex; gap:10px;}
+    #search-bar input{flex:1; padding:10px; border-radius:5px; border:1px solid #ccc;}
+    #search-bar button{padding:10px 20px; border:none; border-radius:5px; background:#3498db; color:white; cursor:pointer;}
+    #search-bar button:hover{background:#2980b9;}
+
     .products {display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; max-width:1000px; margin:30px auto; padding:0 20px;}
     .card {background:#fff; border-radius:15px; padding:15px; box-shadow:0 4px 10px rgba(0,0,0,0.1); text-align:center; transition:0.3s;}
     .card:hover{transform:translateY(-5px); box-shadow:0 8px 15px rgba(0,0,0,0.15);}
     .card img{width:100%; border-radius:10px; margin-bottom:10px;}
-    .card button{background:#3498db; border:none; color:white; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:bold; margin-top:10px; transition:0.3s;}
+    .card button{background:#3498db; border:none; color:white; padding:10px 20px; border-radius:8px; cursor:pointer; margin-top:10px; transition:0.3s;}
     .card button:hover{background:#2980b9;}
-    
+
     #cart-section {max-width:800px; margin:20px auto; background:#fff; padding:15px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1);}
     #cart-items {list-style:none; padding:0;}
     #cart-items li {padding:10px; border-bottom:1px solid #ccc;}
-    
+
+    #checkout button{background:#27ae60; color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; margin-top:10px;}
+    #checkout button:hover{background:#1e8449;}
+
     footer {background:#2c3e50; color:white; padding:20px; text-align:center; font-size:14px; margin-top:50px;}
-    footer .links {margin-bottom:10px;}
     footer a {color:#ecf0f1; margin:0 10px; text-decoration:none;}
     footer a:hover{text-decoration:underline;}
   </style>
@@ -34,17 +44,22 @@
 <body>
 
 <header>
-  <div class="menu" onclick="toggleForm()">☰</div>
-  <div>Grabzy 🛒</div>
+  <div class="menu" onclick="toggleForm()">☰ Sell Product</div>
+  <h1>Grabzy 🛒</h1>
   <div class="cart">🛍️ <span id="cart-count">0</span></div>
 </header>
 
-<div id="add-product-form">
-  <h3>Add a New Product</h3>
+<div id="sell-product-form">
+  <h3>Sell a New Product</h3>
   <input type="text" id="productName" placeholder="Product Name">
   <input type="number" id="productPrice" placeholder="Price (Rs)">
   <input type="text" id="productImage" placeholder="Image URL">
   <button onclick="addProduct()">Add Product</button>
+</div>
+
+<div id="search-bar">
+  <input type="text" id="searchInput" placeholder="Search products...">
+  <button onclick="searchProduct()">Search</button>
 </div>
 
 <div class="products" id="product-grid">
@@ -64,15 +79,16 @@
   <h3>Cart</h3>
   <ul id="cart-items"></ul>
   <p id="commission">Owner Earnings (5%): Rs 0</p>
+  <div id="checkout">
+    <button onclick="checkout()">Checkout (Simulated)</button>
+  </div>
 </div>
 
 <footer>
-  <div class="links">
-    <a href="#">About Us</a> | 
-    <a href="#">Contact</a> | 
-    <a href="#">Privacy Policy</a> | 
-    <a href="#">Terms of Service</a>
-  </div>
+  <a href="#">About Us</a> | 
+  <a href="#">Contact</a> | 
+  <a href="#">Privacy Policy</a> | 
+  <a href="#">Terms of Service</a>
   <p>&copy; 2025 Grabzy. All Rights Reserved.</p>
 </footer>
 
@@ -90,13 +106,12 @@
   function updateCart(){
     let list = document.getElementById("cart-items");
     list.innerHTML = '';
-    cart.forEach((item, i) => {
+    cart.forEach(item=>{
       let li = document.createElement('li');
       li.innerText = item.name + " - Rs " + item.price;
       list.appendChild(li);
     });
-    let commission = total * 0.05;
-    document.getElementById("commission").innerText = "Owner Earnings (5%): Rs " + commission;
+    document.getElementById("commission").innerText = "Owner Earnings (5%): Rs " + (total*0.05);
   }
 
   function addProduct(){
@@ -112,13 +127,31 @@
       document.getElementById('productName').value = '';
       document.getElementById('productPrice').value = '';
       document.getElementById('productImage').value = '';
-      document.getElementById('add-product-form').style.display="none";
-    } else { alert('Please fill in all fields.'); }
+      document.getElementById('sell-product-form').style.display="none";
+    } else { alert('Please fill all fields'); }
   }
 
   function toggleForm(){
-    let form = document.getElementById('add-product-form');
-    form.style.display = (form.style.display === "none" || form.style.display === "") ? "block" : "none";
+    let form = document.getElementById('sell-product-form');
+    form.style.display = (form.style.display === "none" || form.style.display==="") ? "block" : "none";
+  }
+
+  function checkout(){
+    if(cart.length===0){ alert("Cart is empty!"); return; }
+    alert("Simulated checkout complete!\nTotal: Rs " + total + "\nOwner earns: Rs " + (total*0.05));
+    cart = [];
+    total = 0;
+    document.getElementById("cart-count").innerText = 0;
+    updateCart();
+  }
+
+  function searchProduct(){
+    let input = document.getElementById('searchInput').value.toLowerCase();
+    let cards = document.querySelectorAll('.card');
+    cards.forEach(card=>{
+      let text = card.querySelector('p').innerText.toLowerCase();
+      card.style.display = text.includes(input) ? 'block' : 'none';
+    });
   }
 </script>
 
