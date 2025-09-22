@@ -8,16 +8,23 @@
     header .menu {font-size:26px; cursor:pointer; user-select:none;}
     header .cart {font-size:24px; cursor:pointer; position:relative;}
     header .cart span {position:absolute; top:-8px; right:-12px; background:#e74c3c; color:white; border-radius:50%; padding:2px 6px; font-size:14px; font-weight:bold;}
+    
     #add-product-form {display:none; max-width:600px; margin:20px auto; padding:15px; background:#fff; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1); text-align:left;}
     #add-product-form input {width:100%; padding:10px; margin:5px 0; border-radius:5px; border:1px solid #ccc;}
     #add-product-form button {background:#3498db; border:none; color:white; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:bold; margin-top:10px; transition:0.3s;}
     #add-product-form button:hover{background:#2980b9;}
+    
     .products {display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:20px; max-width:1000px; margin:30px auto; padding:0 20px;}
     .card {background:#fff; border-radius:15px; padding:15px; box-shadow:0 4px 10px rgba(0,0,0,0.1); text-align:center; transition:0.3s;}
     .card:hover{transform:translateY(-5px); box-shadow:0 8px 15px rgba(0,0,0,0.15);}
     .card img{width:100%; border-radius:10px; margin-bottom:10px;}
     .card button{background:#3498db; border:none; color:white; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:bold; margin-top:10px; transition:0.3s;}
     .card button:hover{background:#2980b9;}
+    
+    #cart-section {max-width:800px; margin:20px auto; background:#fff; padding:15px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1);}
+    #cart-items {list-style:none; padding:0;}
+    #cart-items li {padding:10px; border-bottom:1px solid #ccc;}
+    
     footer {background:#2c3e50; color:white; padding:20px; text-align:center; font-size:14px; margin-top:50px;}
     footer .links {margin-bottom:10px;}
     footer a {color:#ecf0f1; margin:0 10px; text-decoration:none;}
@@ -51,14 +58,11 @@
     <p>Noodles - Rs 200</p>
     <button onclick="buy('Noodles', 200)">Buy</button>
   </div>
-  <div class="card">
-    <img src="https://i.postimg.cc/PxRxFZMN/tshirt.jpg" alt="T-Shirt">
-    <p>T-Shirt - Rs 800</p>
-    <button onclick="buy('T-Shirt', 800)">Buy</button>
-  </div>
 </div>
 
 <div id="cart-section">
+  <h3>Cart</h3>
+  <ul id="cart-items"></ul>
   <p id="commission">Owner Earnings (5%): Rs 0</p>
 </div>
 
@@ -73,13 +77,24 @@
 </footer>
 
 <script>
-  let items = 0;
+  let cart = [];
   let total = 0;
 
-  function buy(product, price){
-    items++;
+  function buy(name, price){
+    cart.push({name, price});
     total += price;
-    document.getElementById("cart-count").innerText = items;
+    document.getElementById("cart-count").innerText = cart.length;
+    updateCart();
+  }
+
+  function updateCart(){
+    let list = document.getElementById("cart-items");
+    list.innerHTML = '';
+    cart.forEach((item, i) => {
+      let li = document.createElement('li');
+      li.innerText = item.name + " - Rs " + item.price;
+      list.appendChild(li);
+    });
     let commission = total * 0.05;
     document.getElementById("commission").innerText = "Owner Earnings (5%): Rs " + commission;
   }
